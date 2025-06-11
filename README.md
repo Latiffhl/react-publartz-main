@@ -1,4 +1,4 @@
-# Blog CMS with Admin Dashboard 🚀
+# PubLartz 🚀
 
 Ini adalah project **Blog CMS** modern dengan halaman **Admin Dashboard** yang dibangun menggunakan teknologi terbaru seperti **React**, **TypeScript**, **TailwindCSS**, **Vite**, **shadcn/ui**, **lucide-react**, serta didukung oleh **Clerk** untuk autentikasi dan **Supabase** sebagai database dan storage.  
 Project ini telah **dideploy di Vercel** untuk performa maksimal.
@@ -52,22 +52,22 @@ src/
 ├── types/            # TypeScript types
 ├── utils/            # Helper functions
 └── main.tsx          # Entry point aplikasi
-
+```
 🚀 Instalasi & Menjalankan Project
 Clone repository:
 
-bash
+```bash
 
 git clone https://github.com/username/nama-project.git
 cd nama-project
 Install dependencies:
-
-bash
+```
+```bash
 
 npm install
 Setup environment variables:
-
-bash
+```
+```bash
 
 cp .env.example .env
 Isi file .env Anda:
@@ -78,7 +78,8 @@ VITE_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
 VITE_SUPABASE_URL=your_supabase_url
 VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
 Jalankan project secara lokal:
-
-bash
+```
+```bash
 
 npm run dev
+```
