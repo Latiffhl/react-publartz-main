@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
-import { ArrowLeft, Save, Eye, Upload, X } from 'lucide-react';
+import { ArrowLeft, Save, Eye, Upload, X, ZoomIn } from 'lucide-react';
 import { BlogPost } from '../types/blog';
 import { categories } from '../data/blogData';
+import RichTextEditor from './RichTextEditor';
+import ImagePreviewModal from './ImagePreviewModal';
 
 interface BlogFormProps {
   post?: BlogPost | null;
@@ -23,6 +25,7 @@ const BlogForm = ({ post, onSubmit, onCancel }: BlogFormProps) => {
 
   const [previewMode, setPreviewMode] = useState(false);
   const [imagePreview, setImagePreview] = useState('');
+  const [isImageModalOpen, setIsImageModalOpen] = useState(false);
 
   useEffect(() => {
     if (post) {
@@ -151,9 +154,14 @@ const BlogForm = ({ post, onSubmit, onCancel }: BlogFormProps) => {
               {imagePreview ? (
                 <div className="relative">
                   <img src={imagePreview} alt="Preview" className="w-full h-64 object-cover rounded-xl shadow-lg" />
-                  <button type="button" onClick={removeImage} className="absolute top-4 right-4 bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-colors duration-200 shadow-lg">
-                    <X className="w-4 h-4" />
-                  </button>
+                  <div className="absolute top-4 right-4 flex space-x-2">
+                    <button type="button" onClick={() => setIsImageModalOpen(true)} className="bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600 transition-colors duration-200 shadow-lg" title="Lihat ukuran penuh">
+                      <ZoomIn className="w-4 h-4" />
+                    </button>
+                    <button type="button" onClick={removeImage} className="bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-colors duration-200 shadow-lg">
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
               ) : (
                 <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-8 text-center hover:border-blue-500 dark:hover:border-blue-400 transition-colors duration-300">
@@ -250,18 +258,11 @@ const BlogForm = ({ post, onSubmit, onCancel }: BlogFormProps) => {
               />
             </div>
 
-            {/* Content */}
+            {/* Rich Text Editor for Content */}
             <div className="mb-8">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Konten Artikel *</label>
-              <textarea
-                required
-                rows={20}
-                value={formData.content}
-                onChange={(e) => setFormData((prev) => ({ ...prev, content: e.target.value }))}
-                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 resize-none font-mono text-sm"
-                placeholder="Tulis konten artikel dalam HTML..."
-              />
-              <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">Gunakan HTML tags untuk formatting: &lt;h2&gt;, &lt;h3&gt;, &lt;p&gt;, &lt;ul&gt;, &lt;li&gt;, &lt;strong&gt;, dll.</p>
+              <RichTextEditor value={formData.content} onChange={(content) => setFormData((prev) => ({ ...prev, content }))} placeholder="Tulis konten artikel di sini..." />
+              <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">Gunakan toolbar di atas untuk memformat teks dengan mudah.</p>
             </div>
 
             {/* Published Toggle */}
@@ -287,6 +288,9 @@ const BlogForm = ({ post, onSubmit, onCancel }: BlogFormProps) => {
             </button>
           </div>
         </form>
+
+        {/* Image Preview Modal */}
+        <ImagePreviewModal isOpen={isImageModalOpen} imageUrl={imagePreview} onClose={() => setIsImageModalOpen(false)} />
       </div>
     </div>
   );

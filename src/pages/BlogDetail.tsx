@@ -1,16 +1,30 @@
 import { useParams, Link } from 'react-router-dom';
 import { Calendar, User, ArrowLeft, Loader } from 'lucide-react';
+import { useState } from 'react';
 import Header from '../components/Header';
 import BlogCard from '../components/BlogCard';
 import CommentSection from '../components/CommentSection';
 import SocialShare from '../components/SocialShare';
 import Footer from '../components/Footer';
+import ImagePreviewModal from '../components/ImagePreviewModal';
 import { useBlogPost, useBlogPosts } from '../hooks/useBlogPosts';
 
 const BlogDetail = () => {
   const { slug } = useParams();
   const { data: post, isLoading, error } = useBlogPost(slug || '');
   const { data: allPosts = [] } = useBlogPosts();
+  const [previewImage, setPreviewImage] = useState<string>('');
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+
+  const handleImageClick = (imageSrc: string) => {
+    setPreviewImage(imageSrc);
+    setIsPreviewOpen(true);
+  };
+
+  const closePreview = () => {
+    setIsPreviewOpen(false);
+    setPreviewImage('');
+  };
 
   if (isLoading) {
     return (
@@ -59,6 +73,29 @@ const BlogDetail = () => {
   // Create proper URL for sharing
   const shareUrl = `${window.location.origin}/blog/${post.slug}`;
 
+  // Function to add click handlers to images in content
+  const enhanceContentImages = (content: string) => {
+    // Create a temporary div to parse HTML
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = content;
+
+    // Find all images and add click handlers
+    const images = tempDiv.querySelectorAll('img');
+    images.forEach((img, index) => {
+      img.style.cursor = 'pointer';
+      img.style.transition = 'transform 0.3s ease';
+      img.setAttribute('data-image-index', index.toString());
+      img.addEventListener('mouseenter', () => {
+        img.style.transform = 'scale(1.02)';
+      });
+      img.addEventListener('mouseleave', () => {
+        img.style.transform = 'scale(1)';
+      });
+    });
+
+    return tempDiv.innerHTML;
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-black dark:to-black transition-colors duration-300">
       <Header />
@@ -74,7 +111,12 @@ const BlogDetail = () => {
       {/* Hero Image */}
       <div className="container mx-auto px-4 animate-scale-in">
         <div className="max-w-4xl mx-auto">
-          <img src={post.image} alt={post.title} className="w-full h-96 object-cover rounded-xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:scale-[1.02]" />
+          <img
+            src={post.image}
+            alt={post.title}
+            className="w-full h-96 object-cover rounded-xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:scale-[1.02] cursor-pointer"
+            onClick={() => handleImageClick(post.image)}
+          />
         </div>
       </div>
 
@@ -102,8 +144,19 @@ const BlogDetail = () => {
               </div>
             </div>
 
-            {/* Content */}
-            <div className="prose prose-lg text-gray-900 dark:text-gray-200 max-w-none animate-fade-in" style={{ animationDelay: '0.3s' }} dangerouslySetInnerHTML={{ __html: post.content }} />
+            {/* Content with enhanced images */}
+            <div
+              className="prose prose-lg text-gray-900 dark:text-gray-200 max-w-none animate-fade-in"
+              style={{ animationDelay: '0.3s', direction: 'ltr', textAlign: 'left' }}
+              dangerouslySetInnerHTML={{ __html: enhanceContentImages(post.content) }}
+              onClick={(e) => {
+                const target = e.target as HTMLElement;
+                if (target.tagName === 'IMG') {
+                  const img = target as HTMLImageElement;
+                  handleImageClick(img.src);
+                }
+              }}
+            />
           </div>
 
           {/* Social Share */}
@@ -133,6 +186,9 @@ const BlogDetail = () => {
           </div>
         </section>
       )}
+
+      {/* Image Preview Modal */}
+      <ImagePreviewModal isOpen={isPreviewOpen} imageUrl={previewImage} onClose={closePreview} />
 
       <Footer />
     </div>

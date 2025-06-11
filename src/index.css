@@ -90,6 +90,12 @@
 
   body {
     @apply bg-background text-foreground;
+    direction: ltr;
+    text-align: left;
+  }
+
+  html {
+    direction: ltr;
   }
 }
 
@@ -204,26 +210,38 @@
 
   .prose {
     max-width: none;
+    direction: ltr;
+    text-align: left;
   }
 
   .prose h2 {
     @apply text-2xl font-bold text-gray-900 mt-8 mb-4;
+    direction: ltr;
+    text-align: left;
   }
 
   .prose h3 {
     @apply text-xl font-semibold text-gray-900 mt-6 mb-3;
+    direction: ltr;
+    text-align: left;
   }
 
   .prose p {
     @apply text-gray-700 leading-relaxed mb-4;
+    direction: ltr;
+    text-align: left;
   }
 
   .prose ul {
     @apply list-disc list-inside mb-4 space-y-2;
+    direction: ltr;
+    text-align: left;
   }
 
   .prose li {
     @apply text-gray-700;
+    direction: ltr;
+    text-align: left;
   }
 
   .prose strong {
@@ -232,5 +250,43 @@
 
   .prose em {
     @apply italic;
+  }
+
+  .prose img {
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    max-width: 100%;
+    height: auto;
+  }
+
+  .prose img:hover {
+    transform: scale(1.02);
+  }
+
+  /* Fix text direction for content editable */
+  [contenteditable] {
+    direction: ltr !important;
+    text-align: left !important;
+  }
+
+  /* Dark mode prose styles */
+  .dark .prose h2 {
+    @apply text-gray-100;
+  }
+
+  .dark .prose h3 {
+    @apply text-gray-100;
+  }
+
+  .dark .prose p {
+    @apply text-gray-300;
+  }
+
+  .dark .prose li {
+    @apply text-gray-300;
+  }
+
+  .dark .prose strong {
+    @apply text-gray-100;
   }
 }
